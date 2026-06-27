@@ -50,18 +50,6 @@ python3 -m http.server 8000
 
 Use the **same** URL every time — settings are stored per-origin in `localStorage`.
 
-## Deploy (so friends can use it)
-
-It's a static site — host the folder anywhere with HTTPS. Two free options:
-
-- **Netlify drop:** drag the project folder onto <https://app.netlify.com/drop>.
-  Instant HTTPS URL. Share it.
-- **GitHub Pages:**
-  ```bash
-  git init && git add . && git commit -m "TailorFit"
-  # push to a GitHub repo, then: Settings → Pages → deploy from branch (root)
-  ```
-
 No build, no environment variables, no server config.
 
 ## Using it (each user)
