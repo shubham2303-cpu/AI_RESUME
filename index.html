@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TailorFit</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>TailorFit</h1>
+      <p class="tagline">Reframe your real resume to a job description. Never fabricates.</p>
+    </header>
+
+    <!-- Bring-your-own-key + privacy note. -->
+    <div class="byok-note">
+      <strong>Bring your own key.</strong> Your Anthropic API key and resume stay in
+      <em>this browser only</em> (<code>localStorage</code>) — never sent to any server
+      except <code>api.anthropic.com</code> with your own key. No accounts, no backend.
+      Don't use on a shared computer. Get a key at
+      <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.
+    </div>
+
+    <!-- Settings: master resume + API key, saved to localStorage. -->
+    <details id="settings" class="card">
+      <summary>Settings (resume &amp; API key)</summary>
+      <div class="settings-body">
+        <p class="hint">
+          Stored only in this browser (<code>localStorage</code>). The API key is
+          never logged; it is sent only to the Anthropic API.
+        </p>
+
+        <label for="apiKey">
+          Anthropic API key <span class="hint">— starts with <code>sk-ant-</code></span>
+        </label>
+        <input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off" />
+        <button id="toggleKey" class="secondary" type="button">Show key</button>
+
+        <label for="masterResume">
+          Master resume <span class="hint">— upload a file or paste below; review before saving</span>
+        </label>
+        <div class="row">
+          <input id="resumeFile" type="file" accept=".pdf,.docx,.txt" />
+          <span id="extract-status" class="hint"></span>
+        </div>
+        <textarea id="masterResume" placeholder="Upload a PDF/DOCX/TXT above, or paste your complete master resume here…"></textarea>
+
+        <label for="pinnedSkills">
+          Always-include skills
+          <span class="hint">— comma-separated; merged into the AI/ML skills line every run. Only list skills you genuinely have.</span>
+        </label>
+        <input id="pinnedSkills" type="text" placeholder="GenAI, Claude Code, RAG, MCP, Pinecone, Redis" />
+
+        <label for="contactLinks">
+          Profile links
+          <span class="hint">— one per line, format <code>Label: URL</code>. Injected into the contact line, always clickable.</span>
+        </label>
+        <textarea id="contactLinks" class="small-area" placeholder="LinkedIn: https://www.linkedin.com/in/you&#10;GitHub: https://github.com/you"></textarea>
+
+        <label for="entryLinks">
+          Project / entry links
+          <span class="hint">— one per line, format <code>keyword = URL</code>. The keyword matches a project/job heading; that heading becomes a link.</span>
+        </label>
+        <textarea id="entryLinks" class="small-area" placeholder="HR Copilot = https://github.com/you/repo&#10;Daily Learning = https://github.com/you/repo2"></textarea>
+
+        <div class="row">
+          <button id="save" type="button">Save</button>
+          <span id="save-status" class="ok"></span>
+        </div>
+      </div>
+    </details>
+
+    <!-- Warns if resume or key missing. -->
+    <div id="setup-warning" class="warning hidden">
+      No master resume or API key saved yet. Open <strong>Settings</strong> above to add them.
+    </div>
+
+    <main class="card">
+      <label for="jd">Job description</label>
+      <textarea id="jd" placeholder="Paste the job description here…"></textarea>
+
+      <button id="tailor" type="button">Tailor my resume</button>
+    </main>
+
+    <section id="output" class="card hidden">
+      <div id="output-status" class="hint"></div>
+      <div id="output-error" class="error hidden"></div>
+
+      <div id="output-body" class="hidden">
+        <div class="toolbar">
+          <button id="copyBtn" type="button">Copy text</button>
+          <button id="pdfBtn" class="secondary" type="button">Download PDF</button>
+          <span id="copy-status" class="ok"></span>
+        </div>
+        <p class="legend">
+          <span class="legend-edited">highlighted</span> = reworded ·
+          <span class="legend-stretch">⚑ stretch</span> = review before using
+        </p>
+        <div id="usage" class="usage hint"></div>
+        <div id="resume-render" class="resume-render"></div>
+        <div id="gap-report"></div>
+        <div id="stretch-notes"></div>
+      </div>
+    </section>
+
+    <!-- Vendored libraries (local, no runtime CDN). -->
+    <script src="vendor/pdf.min.js"></script>
+    <script src="vendor/mammoth.browser.min.js"></script>
+    <script src="extract.js"></script>
+    <script src="prompts.js"></script>
+    <script src="llm.js"></script>
+    <script src="render.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

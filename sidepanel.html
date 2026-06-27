@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TailorFit</title>
+    <link rel="stylesheet" href="sidepanel.css" />
+  </head>
+  <body>
+    <header>
+      <h1>TailorFit</h1>
+      <button id="open-options" class="link-btn" type="button">Settings</button>
+    </header>
+
+    <!-- Warns if resume or API key is missing. Hidden when both set. -->
+    <div id="setup-warning" class="warning hidden">
+      No master resume or API key saved yet.
+      <a href="#" id="goto-options">Open settings</a> to add them.
+    </div>
+
+    <label for="jd">Job description</label>
+    <textarea id="jd" placeholder="Paste the job description here…"></textarea>
+
+    <!-- Disabled in Phase 1 — wired up in Phase 2. -->
+    <button id="tailor" type="button" disabled>Tailor (coming in Phase 2)</button>
+
+    <section id="output" class="output hidden"></section>
+
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

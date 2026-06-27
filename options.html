@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TailorFit — Settings</title>
+    <style>
+      body {
+        font-family: -apple-system, system-ui, sans-serif;
+        font-size: 14px;
+        color: #1a1a1a;
+        max-width: 720px;
+        margin: 24px auto;
+        padding: 0 16px;
+        line-height: 1.5;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin: 18px 0 6px;
+      }
+      .hint {
+        font-weight: 400;
+        color: #666;
+        font-size: 13px;
+      }
+      textarea,
+      input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #d0d0d0;
+        border-radius: 6px;
+        font: inherit;
+        box-sizing: border-box;
+      }
+      textarea {
+        min-height: 320px;
+        resize: vertical;
+        font-family: ui-monospace, monospace;
+        font-size: 13px;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-top: 18px;
+      }
+      button {
+        font: inherit;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        background: #2563eb;
+        color: #fff;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #e5e5e5;
+        color: #1a1a1a;
+      }
+      #status {
+        color: #15803d;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>TailorFit Settings</h1>
+    <p class="hint">
+      Stored only on this device in <code>chrome.storage.local</code>. The API
+      key is never logged or sent anywhere except the Anthropic API.
+    </p>
+
+    <label for="apiKey">
+      Anthropic API key
+      <span class="hint">— starts with <code>sk-ant-</code></span>
+    </label>
+    <input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off" />
+    <div class="row">
+      <button id="toggleKey" class="secondary" type="button">Show key</button>
+    </div>
+
+    <label for="masterResume">
+      Master resume
+      <span class="hint">— your full, truthful resume in plain text</span>
+    </label>
+    <textarea
+      id="masterResume"
+      placeholder="Paste your complete master resume here…"
+    ></textarea>
+
+    <div class="row">
+      <button id="save" type="button">Save</button>
+      <span id="status"></span>
+    </div>
+
+    <script src="options.js"></script>
+  </body>
+</html>
