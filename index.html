@@ -14,11 +14,10 @@
 
     <!-- Bring-your-own-key + privacy note. -->
     <div class="byok-note">
-      <strong>Bring your own key.</strong> Your Anthropic API key and resume stay in
-      <em>this browser only</em> (<code>localStorage</code>) — never sent to any server
-      except <code>api.anthropic.com</code> with your own key. No accounts, no backend.
-      Don't use on a shared computer. Get a key at
-      <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.
+      <strong>Bring your own key.</strong> Your API key and resume stay in
+      <em>this browser only</em> (<code>localStorage</code>) — never sent anywhere except
+      the selected provider (<code>api.anthropic.com</code> or <code>api.openai.com</code>).
+      No accounts, no backend. Don't use on a shared computer.
     </div>
 
     <!-- Settings: master resume + API key, saved to localStorage. -->
@@ -26,15 +25,31 @@
       <summary>Settings (resume &amp; API key)</summary>
       <div class="settings-body">
         <p class="hint">
-          Stored only in this browser (<code>localStorage</code>). The API key is
-          never logged; it is sent only to the Anthropic API.
+          Stored only in this browser (<code>localStorage</code>). Keys are never logged;
+          sent only to the selected provider's API.
         </p>
 
-        <label for="apiKey">
-          Anthropic API key <span class="hint">— starts with <code>sk-ant-</code></span>
-        </label>
-        <input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off" />
-        <button id="toggleKey" class="secondary" type="button">Show key</button>
+        <label for="provider">AI provider</label>
+        <select id="provider">
+          <option value="anthropic">Anthropic (Claude Sonnet)</option>
+          <option value="openai">OpenAI (GPT-4o)</option>
+        </select>
+
+        <div id="anthropic-key-section">
+          <label for="apiKey">
+            Anthropic API key <span class="hint">— starts with <code>sk-ant-</code></span>
+          </label>
+          <input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off" />
+          <button id="toggleKey" class="secondary" type="button">Show key</button>
+        </div>
+
+        <div id="openai-key-section" class="hidden">
+          <label for="openaiApiKey">
+            OpenAI API key <span class="hint">— starts with <code>sk-</code></span>
+          </label>
+          <input id="openaiApiKey" type="password" placeholder="sk-…" autocomplete="off" />
+          <button id="toggleOpenaiKey" class="secondary" type="button">Show key</button>
+        </div>
 
         <label for="masterResume">
           Master resume <span class="hint">— upload a file or paste below; review before saving</span>

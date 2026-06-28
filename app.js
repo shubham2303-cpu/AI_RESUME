@@ -2,6 +2,8 @@
 
 const KEYS = {
   apiKey: "tf_apiKey",
+  openaiApiKey: "tf_openaiApiKey",
+  provider: "tf_provider",
   resume: "tf_masterResume",
   pinned: "tf_pinnedSkills",
   contactLinks: "tf_contactLinks",
@@ -12,7 +14,11 @@ const DEFAULT_PINNED = "";
 const DEFAULT_CONTACT_LINKS = "";
 const DEFAULT_ENTRY_LINKS = "";
 
+const providerEl = document.getElementById("provider");
+const anthropicSection = document.getElementById("anthropic-key-section");
+const openaiSection = document.getElementById("openai-key-section");
 const apiKeyEl = document.getElementById("apiKey");
+const openaiKeyEl = document.getElementById("openaiApiKey");
 const masterResumeEl = document.getElementById("masterResume");
 const pinnedSkillsEl = document.getElementById("pinnedSkills");
 const contactLinksEl = document.getElementById("contactLinks");
@@ -46,12 +52,15 @@ let sessionRuns = 0;
 // ---- Settings ----
 
 function load() {
+  providerEl.value = localStorage.getItem(KEYS.provider) || "anthropic";
   apiKeyEl.value = localStorage.getItem(KEYS.apiKey) || "";
+  openaiKeyEl.value = localStorage.getItem(KEYS.openaiApiKey) || "";
   masterResumeEl.value = localStorage.getItem(KEYS.resume) || "";
   // First run: prefill + persist defaults so they apply immediately.
   pinnedSkillsEl.value = loadOrDefault(KEYS.pinned, DEFAULT_PINNED);
   contactLinksEl.value = loadOrDefault(KEYS.contactLinks, DEFAULT_CONTACT_LINKS);
   entryLinksEl.value = loadOrDefault(KEYS.entryLinks, DEFAULT_ENTRY_LINKS);
+  updateProviderUI();
 }
 
 // Return saved value, or seed localStorage with a default on first run.
@@ -65,7 +74,9 @@ function loadOrDefault(key, def) {
 }
 
 function save() {
+  localStorage.setItem(KEYS.provider, providerEl.value);
   localStorage.setItem(KEYS.apiKey, apiKeyEl.value.trim());
+  localStorage.setItem(KEYS.openaiApiKey, openaiKeyEl.value.trim());
   localStorage.setItem(KEYS.resume, masterResumeEl.value);
   localStorage.setItem(KEYS.pinned, pinnedSkillsEl.value.trim());
   localStorage.setItem(KEYS.contactLinks, contactLinksEl.value.trim());
@@ -76,19 +87,31 @@ function save() {
 }
 
 function checkSetup() {
-  const ready =
-    Boolean(localStorage.getItem(KEYS.apiKey)) &&
-    Boolean(localStorage.getItem(KEYS.resume));
+  const provider = localStorage.getItem(KEYS.provider) || "anthropic";
+  const keyStored = provider === "openai"
+    ? localStorage.getItem(KEYS.openaiApiKey)
+    : localStorage.getItem(KEYS.apiKey);
+  const ready = Boolean(keyStored) && Boolean(localStorage.getItem(KEYS.resume));
   setupWarning.classList.toggle("hidden", ready);
   if (!ready) settingsEl.open = true;
+}
+
+function updateProviderUI() {
+  const isOpenAI = providerEl.value === "openai";
+  anthropicSection.classList.toggle("hidden", isOpenAI);
+  openaiSection.classList.toggle("hidden", !isOpenAI);
 }
 
 function toggleKey() {
   const hidden = apiKeyEl.type === "password";
   apiKeyEl.type = hidden ? "text" : "password";
-  document.getElementById("toggleKey").textContent = hidden
-    ? "Hide key"
-    : "Show key";
+  document.getElementById("toggleKey").textContent = hidden ? "Hide key" : "Show key";
+}
+
+function toggleOpenaiKey() {
+  const hidden = openaiKeyEl.type === "password";
+  openaiKeyEl.type = hidden ? "text" : "password";
+  document.getElementById("toggleOpenaiKey").textContent = hidden ? "Hide key" : "Show key";
 }
 
 // ---- Resume upload: extract text into the editable box (user reviews + saves) ----
@@ -111,16 +134,20 @@ async function handleUpload(e) {
 // ---- Core tailor loop ----
 
 async function tailor() {
+  const provider = localStorage.getItem(KEYS.provider) || "anthropic";
+  const activeKeyEl = provider === "openai" ? openaiKeyEl : apiKeyEl;
+  const activeKeyStorage = provider === "openai" ? KEYS.openaiApiKey : KEYS.apiKey;
+
   // Fall back to live form fields if nothing is saved yet, and persist them —
   // so "forgot to click Save" no longer blocks tailoring.
-  if (!localStorage.getItem(KEYS.apiKey) && apiKeyEl.value.trim()) {
-    localStorage.setItem(KEYS.apiKey, apiKeyEl.value.trim());
+  if (!localStorage.getItem(activeKeyStorage) && activeKeyEl.value.trim()) {
+    localStorage.setItem(activeKeyStorage, activeKeyEl.value.trim());
   }
   if (!localStorage.getItem(KEYS.resume) && masterResumeEl.value.trim()) {
     localStorage.setItem(KEYS.resume, masterResumeEl.value);
   }
 
-  const apiKey = localStorage.getItem(KEYS.apiKey) || "";
+  const apiKey = localStorage.getItem(activeKeyStorage) || "";
   const masterResume = localStorage.getItem(KEYS.resume) || "";
   const jd = jdEl.value.trim();
 
@@ -145,6 +172,7 @@ async function tailor() {
     const pinnedSkills = localStorage.getItem(KEYS.pinned) || "";
     const { data, usage } = await tailorResume({
       apiKey,
+      provider,
       system: SYSTEM_PROMPT,
       userPrompt: buildUserPrompt(masterResume, jd, pinnedSkills),
     });
@@ -252,6 +280,8 @@ function showError(msg) {
 
 document.getElementById("save").addEventListener("click", save);
 document.getElementById("toggleKey").addEventListener("click", toggleKey);
+document.getElementById("toggleOpenaiKey").addEventListener("click", toggleOpenaiKey);
+providerEl.addEventListener("change", () => { updateProviderUI(); save(); });
 resumeFileEl.addEventListener("change", handleUpload);
 tailorBtn.addEventListener("click", tailor);
 copyBtn.addEventListener("click", copyResume);
