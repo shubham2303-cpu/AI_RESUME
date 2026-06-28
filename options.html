@@ -70,17 +70,34 @@
   <body>
     <h1>TailorFit Settings</h1>
     <p class="hint">
-      Stored only on this device in <code>chrome.storage.local</code>. The API
-      key is never logged or sent anywhere except the Anthropic API.
+      Stored only on this device in <code>chrome.storage.local</code>. Keys are never
+      logged or sent anywhere except the selected provider's API.
     </p>
 
-    <label for="apiKey">
-      Anthropic API key
-      <span class="hint">— starts with <code>sk-ant-</code></span>
-    </label>
-    <input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off" />
-    <div class="row">
-      <button id="toggleKey" class="secondary" type="button">Show key</button>
+    <label for="provider">AI provider</label>
+    <select id="provider">
+      <option value="anthropic">Anthropic (Claude Sonnet)</option>
+      <option value="openai">OpenAI (GPT-4o)</option>
+    </select>
+
+    <div id="anthropic-key-section">
+      <label for="apiKey">
+        Anthropic API key <span class="hint">— starts with <code>sk-ant-</code></span>
+      </label>
+      <input id="apiKey" type="password" placeholder="sk-ant-…" autocomplete="off" />
+      <div class="row">
+        <button id="toggleKey" class="secondary" type="button">Show key</button>
+      </div>
+    </div>
+
+    <div id="openai-key-section" style="display:none">
+      <label for="openaiApiKey">
+        OpenAI API key <span class="hint">— starts with <code>sk-</code></span>
+      </label>
+      <input id="openaiApiKey" type="password" placeholder="sk-…" autocomplete="off" />
+      <div class="row">
+        <button id="toggleOpenaiKey" class="secondary" type="button">Show key</button>
+      </div>
     </div>
 
     <label for="masterResume">
