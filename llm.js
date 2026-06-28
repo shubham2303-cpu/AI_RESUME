@@ -6,7 +6,7 @@ const ANTHROPIC_MODEL = "claude-sonnet-4-6";
 const ANTHROPIC_PRICING = { inputPerMillion: 3, outputPerMillion: 15 };
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
-const OPENAI_MODEL = "gpt-4o";
+const OPENAI_MODEL = "gpt-5.1 mini";
 const OPENAI_PRICING = { inputPerMillion: 2.5, outputPerMillion: 10 };
 
 const MAX_TOKENS = 4096;
