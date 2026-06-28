@@ -1,4 +1,4 @@
-// Options page: load and save provider, API keys, and master resume.
+// Settings page: load and save provider, API keys, master resume, and extra settings.
 
 const providerEl = document.getElementById("provider");
 const anthropicSection = document.getElementById("anthropic-key-section");
@@ -6,9 +6,22 @@ const openaiSection = document.getElementById("openai-key-section");
 const apiKeyEl = document.getElementById("apiKey");
 const openaiKeyEl = document.getElementById("openaiApiKey");
 const masterResumeEl = document.getElementById("masterResume");
+const pinnedSkillsEl = document.getElementById("pinnedSkills");
+const contactLinksEl = document.getElementById("contactLinks");
+const entryLinksEl = document.getElementById("entryLinks");
 const statusEl = document.getElementById("status");
 const toggleKeyBtn = document.getElementById("toggleKey");
 const toggleOpenaiKeyBtn = document.getElementById("toggleOpenaiKey");
+
+const KEYS = {
+  provider: "tf_provider",
+  apiKey: "tf_apiKey",
+  openaiApiKey: "tf_openaiApiKey",
+  resume: "tf_masterResume",
+  pinned: "tf_pinnedSkills",
+  contactLinks: "tf_contactLinks",
+  entryLinks: "tf_entryLinks",
+};
 
 function updateProviderUI() {
   const isOpenAI = providerEl.value === "openai";
@@ -16,23 +29,25 @@ function updateProviderUI() {
   openaiSection.style.display = isOpenAI ? "" : "none";
 }
 
-async function load() {
-  const { provider, apiKey, openaiApiKey, masterResume } =
-    await chrome.storage.local.get(["provider", "apiKey", "openaiApiKey", "masterResume"]);
-  providerEl.value = provider || "anthropic";
-  if (apiKey) apiKeyEl.value = apiKey;
-  if (openaiApiKey) openaiKeyEl.value = openaiApiKey;
-  if (masterResume) masterResumeEl.value = masterResume;
+function load() {
+  providerEl.value = localStorage.getItem(KEYS.provider) || "anthropic";
+  apiKeyEl.value = localStorage.getItem(KEYS.apiKey) || "";
+  openaiKeyEl.value = localStorage.getItem(KEYS.openaiApiKey) || "";
+  masterResumeEl.value = localStorage.getItem(KEYS.resume) || "";
+  pinnedSkillsEl.value = localStorage.getItem(KEYS.pinned) || "";
+  contactLinksEl.value = localStorage.getItem(KEYS.contactLinks) || "";
+  entryLinksEl.value = localStorage.getItem(KEYS.entryLinks) || "";
   updateProviderUI();
 }
 
-async function save() {
-  await chrome.storage.local.set({
-    provider: providerEl.value,
-    apiKey: apiKeyEl.value.trim(),
-    openaiApiKey: openaiKeyEl.value.trim(),
-    masterResume: masterResumeEl.value,
-  });
+function save() {
+  localStorage.setItem(KEYS.provider, providerEl.value);
+  localStorage.setItem(KEYS.apiKey, apiKeyEl.value.trim());
+  localStorage.setItem(KEYS.openaiApiKey, openaiKeyEl.value.trim());
+  localStorage.setItem(KEYS.resume, masterResumeEl.value);
+  localStorage.setItem(KEYS.pinned, pinnedSkillsEl.value.trim());
+  localStorage.setItem(KEYS.contactLinks, contactLinksEl.value.trim());
+  localStorage.setItem(KEYS.entryLinks, entryLinksEl.value.trim());
   statusEl.textContent = "Saved ✓";
   setTimeout(() => (statusEl.textContent = ""), 2000);
 }
