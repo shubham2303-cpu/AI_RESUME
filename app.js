@@ -1,4 +1,4 @@
-// TailorFit — Phase 2: settings persistence, resume upload+extract, core tailor loop.
+// TailorFit — settings persistence, resume upload+extract, core tailor loop.
 
 const KEYS = {
   apiKey: "tf_apiKey",
