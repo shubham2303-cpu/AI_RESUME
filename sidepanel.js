@@ -5,10 +5,10 @@ const setupWarning = document.getElementById("setup-warning");
 
 // Show a warning if resume or API key is missing.
 async function checkSetup() {
-  const { masterResume, apiKey } = await chrome.storage.local.get([
-    "masterResume",
-    "apiKey",
-  ]);
+  const stored = await chrome.storage.local.get(["tf_masterResume", "tf_apiKey", "tf_openaiApiKey", "tf_provider"]);
+  const provider = stored["tf_provider"] || "anthropic";
+  const apiKey = provider === "openai" ? stored["tf_openaiApiKey"] : stored["tf_apiKey"];
+  const masterResume = stored["tf_masterResume"];
   const ready = Boolean(masterResume && apiKey);
   setupWarning.classList.toggle("hidden", ready);
 }
