@@ -2,17 +2,5 @@
   "manifest_version": 3,
   "name": "TailorFit",
   "version": "0.1.0",
-  "description": "Personal resume-tailoring tool. Reframes your master resume to a job description — never fabricates.",
-  "permissions": ["storage", "sidePanel"],
-  "host_permissions": ["https://api.anthropic.com/*", "https://api.openai.com/*"],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_title": "Open TailorFit panel"
-  },
-  "side_panel": {
-    "default_path": "sidepanel.html"
-  },
-  "options_page": "options.html"
+  "description": "Personal resume-tailoring tool. Reframes your master resume to a job description — never fabricates."
 }
