@@ -7,9 +7,10 @@ const ANTHROPIC_PRICING = { inputPerMillion: 3, outputPerMillion: 15 };
 
 const OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 const OPENAI_MODEL = "gpt-5.4-mini";
-const OPENAI_PRICING = { inputPerMillion: 2.5, outputPerMillion: 10 };
+const OPENAI_PRICING = { inputPerMillion: 0.40, outputPerMillion: 1.60 };
 
 const MAX_TOKENS = 4096;
+
 
 // Send the tailoring request. Returns the model's text output.
 // Throws Error with a human-readable message on any failure.
@@ -65,15 +66,23 @@ async function tailorWithOpenAI({ apiKey, system, userPrompt }) {
       },
       body: JSON.stringify({
         model: OPENAI_MODEL,
-        max_tokens: MAX_TOKENS,
+        max_completion_tokens: MAX_TOKENS,
         messages: [
           { role: "system", content: system },
           { role: "user", content: userPrompt },
         ],
       }),
     });
-  } catch (_) {
-    throw new Error("Network error — could not reach the OpenAI API. Check your connection.");
+  } catch (err) {
+    // fetch() only throws on network failure or CORS preflight block.
+    // OpenAI does not support direct browser calls from arbitrary origins —
+    // switch to Anthropic, or run a local backend proxy for OpenAI.
+    const isCors = err instanceof TypeError;
+    throw new Error(
+      isCors
+        ? "CORS block — OpenAI rejected a direct browser request. Use Anthropic instead, or proxy the OpenAI call through a backend."
+        : `Network error — could not reach the OpenAI API: ${err.message}`
+    );
   }
 
   if (!res.ok) throw new Error(await describeHttpError(res, "openai"));
