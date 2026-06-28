@@ -75,27 +75,38 @@ Field rules:
 - CRITICAL: NEVER place any "suggestedSkill" into "sections". You only identify and suggest gaps. Only the human decides whether to add a skill. Do not add it yourself.
 - Omit fields that are empty strings only if truly absent; otherwise use "".`;
 
+// Strip delimiter tags from user content to prevent prompt injection.
+function sanitizeForPrompt(text) {
+  return String(text || "").replace(
+    /<\/?(?:job_description|master_resume|always_include_skills)>/gi,
+    ""
+  );
+}
+
 // Build the user message from the master resume + job description + pinned skills.
 function buildUserPrompt(masterResume, jobDescription, pinnedSkills) {
+  const safeResume = sanitizeForPrompt(masterResume);
+  const safeJd = sanitizeForPrompt(jobDescription);
+
   const pinnedBlock = (pinnedSkills || "").trim()
     ? `
 
 ALWAYS-INCLUDE SKILLS (I genuinely have these — incorporate ALL of them into the Skills section, each under the most appropriate category; do not duplicate, do not list as one-word bullets):
 <always_include_skills>
-${pinnedSkills.trim()}
+${sanitizeForPrompt(pinnedSkills.trim())}
 </always_include_skills>`
     : "";
 
   return `Here is my MASTER RESUME (the only source of truth — every fact must come from here):
 
 <master_resume>
-${masterResume}
+${safeResume}
 </master_resume>
 
 Here is the JOB DESCRIPTION I am applying to:
 
 <job_description>
-${jobDescription}
+${safeJd}
 </job_description>${pinnedBlock}
 
 Tailor my master resume to this job description following all absolute rules and Harvard guidelines. Reframe and re-emphasize only what is already true. Categorize the always-include skills sensibly. Flag edited and stretch bullets, and list honest gaps. Respond with ONLY the JSON object.`;
