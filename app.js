@@ -49,6 +49,13 @@ let lastResult = null;
 let sessionCost = 0;
 let sessionRuns = 0;
 
+// Fire a GoatCounter custom event. No-op if script hasn't loaded yet.
+function track(path) {
+  try {
+    if (window.goatcounter) window.goatcounter.count({ path, event: true });
+  } catch (_) { /* never break the app over analytics */ }
+}
+
 // ---- Settings ----
 
 function load() {
@@ -167,6 +174,7 @@ async function tailor() {
 
   setLoading(true);
   outputStatusEl.textContent = "Tailoring… (a few seconds)";
+  track(`tailor/start/${provider}`);
 
   try {
     const pinnedSkills = localStorage.getItem(KEYS.pinned) || "";
@@ -187,8 +195,10 @@ async function tailor() {
     resumeRenderEl.innerHTML = renderResume(data);
     gapReportEl.innerHTML = renderGaps(data);
     stretchNotesEl.innerHTML = renderStretchNotes(data);
+    track(`tailor/success/${provider}`);
     outputBodyEl.classList.remove("hidden");
   } catch (err) {
+    track(`tailor/error/${provider}`);
     showError(err.message);
   } finally {
     setLoading(false);
@@ -216,6 +226,7 @@ function renderUsage(usage) {
 // Copy the tailored resume as plain text.
 async function copyResume() {
   if (!lastResult) return;
+  track("copy");
   try {
     await navigator.clipboard.writeText(resumeToText(lastResult));
     copyStatusEl.textContent = "Copied ✓";
@@ -253,6 +264,7 @@ function handleGapClick(e) {
 // Open a Harvard-styled print view; user saves as PDF from the browser dialog.
 function downloadPdf() {
   if (!lastResult) return;
+  track("pdf/download");
   const win = window.open("", "_blank");
   if (!win) {
     copyStatusEl.textContent = "Allow pop-ups to download the PDF.";
